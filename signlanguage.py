@@ -18,7 +18,7 @@ def get_base64_image(image_path):
         return base64.b64encode(img_file.read()).decode()
 
 # Path to your image file
-image_path = 'asl023.png'
+image_path = 'asl025.png'
 
 # Generate the base64 image
 base64_image = get_base64_image(image_path)
@@ -29,7 +29,7 @@ st.markdown(
     <style>
     .stApp {{
         background: url(data:image/png;base64,{base64_image}) no-repeat center center fixed;
-        background-size: 100% 87%;
+        background-size: 100% 99.9%;
 ;
     }}
     </style>
