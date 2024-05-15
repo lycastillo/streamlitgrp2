@@ -11,13 +11,20 @@ def load_model():
 
 model = load_model()
 
-# CSS to set the background image
+# CSS to set the background image and the bottom image
 st.markdown(
     """
     <style>
     .stApp {
-        background: url("background.png") no-repeat center center fixed;
+        background: url("/workspaces/streamlitgrp2/background.png") no-repeat center center fixed;
         background-size: cover;
+    }
+    .bottom-image {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
     }
     </style>
     """,
@@ -55,3 +62,13 @@ else:
                    'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     string = "OUTPUT : " + class_names[np.argmax(prediction)]
     st.success(string)
+
+# Adding the bottom image
+st.markdown(
+    """
+    <div>
+        <img src="/workspaces/streamlitgrp2/asl.png" class="bottom-image">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
