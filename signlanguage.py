@@ -1,6 +1,5 @@
 import streamlit as st
 import tensorflow as tf
-import PIL
 from PIL import Image, ImageOps
 import numpy as np
 
@@ -19,11 +18,11 @@ file = st.file_uploader("Choose a hand gesture from the photos", type=["jpg", "p
 
 def import_and_predict(image_data, model):
     size = (150, 150)  # Match the input size with the Google Colab code
-    image = ImageOps.fit(image_data, size, PIL.Image.LANCZOS)  # Use PIL.Image.LANCZOS for resizing
+    image = ImageOps.fit(image_data, size, Image.LANCZOS)  # Use PIL.Image.LANCZOS for resizing
     img = np.asarray(image)
     img = img / 255.0  # Normalize pixel values
     img = np.expand_dims(img, axis=0)
-    prediction = model.predict(img_reshape)
+    prediction = model.predict(img)  # Correct variable name
     return prediction
 
 if file is None:
