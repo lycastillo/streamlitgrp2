@@ -3,8 +3,8 @@ import tensorflow as tf
 import PIL.Image
 from PIL import Image, ImageOps
 import numpy as np
+import base64
 
-# Load the model
 @st.cache(allow_output_mutation=True)
 def load_model():
     model = tf.keras.models.load_model('signlanguage.h5')
@@ -12,22 +12,35 @@ def load_model():
 
 model = load_model()
 
-# Function to read the HTML file
-def read_html(file_path):
-    with open(file_path, 'r', encoding='utf-8') as file:
-        html_content = file.read()
-    return html_content
+# Function to convert image to base64
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
 
-# Path to your HTML file
-html_file_path = 'index.html'
+# Path to your image file
+image_path = 'asl2 (1).png'
 
-# Read the HTML file
-html_content = read_html(html_file_path)
+# Generate the base64 image
+base64_image = get_base64_image(image_path)
 
-# Render the HTML file in Streamlit
-st.markdown(html_content, unsafe_allow_html=True)
+# CSS to set the background image
+st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        background: url(data:image/png;base64,{base64_image}) no-repeat center center fixed;
+        background-size: 97% 96%;
+;
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-# Additional Streamlit UI elements
+st.write("""
+# American Sign Language
+""")
+
 file = st.file_uploader("Choose a hand gesture from the photos", type=["jpg", "png"])
 
 def import_and_predict(image_data, model):
