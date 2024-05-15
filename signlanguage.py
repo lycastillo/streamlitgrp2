@@ -4,37 +4,30 @@ import PIL.Image
 from PIL import Image, ImageOps
 import numpy as np
 
-@st.cache_resource
+# Load the model
+@st.cache(allow_output_mutation=True)
 def load_model():
     model = tf.keras.models.load_model('signlanguage.h5')
     return model
 
 model = load_model()
 
-# CSS to set the background image and the bottom image
-st.markdown(
-    """
-    <style>
-    .stApp {
-        background: url("/workspaces/streamlitgrp2/background.png") no-repeat center center fixed;
-        background-size: cover;
-    }
-    .bottom-image {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: auto;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+# Function to read the HTML file
+def read_html(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        html_content = file.read()
+    return html_content
 
-st.write("""
-# American Sign Language
-""")
+# Path to your HTML file
+html_file_path = 'index.html'
 
+# Read the HTML file
+html_content = read_html(html_file_path)
+
+# Render the HTML file in Streamlit
+st.markdown(html_content, unsafe_allow_html=True)
+
+# Additional Streamlit UI elements
 file = st.file_uploader("Choose a hand gesture from the photos", type=["jpg", "png"])
 
 def import_and_predict(image_data, model):
@@ -62,13 +55,3 @@ else:
                    'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     string = "OUTPUT : " + class_names[np.argmax(prediction)]
     st.success(string)
-
-# Adding the bottom image
-st.markdown(
-    """
-    <div>
-        <img src="/workspaces/streamlitgrp2/asl.png" class="bottom-image">
-    </div>
-    """,
-    unsafe_allow_html=True
-)
