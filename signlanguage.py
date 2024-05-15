@@ -1,11 +1,10 @@
 import streamlit as st
 import tensorflow as tf
-import PIL.Image
 from PIL import Image, ImageOps
 import numpy as np
 import base64
 
-@st.cache(allow_output_mutation=True)
+@st.cache_resource
 def load_model():
     model = tf.keras.models.load_model('signlanguage.h5')
     return model
@@ -18,31 +17,45 @@ def get_base64_image(image_path):
         return base64.b64encode(img_file.read()).decode()
 
 # Path to your image file
-image_path = 'asl025.png'
+image_path = 'aslbgg.png'
 
 # Generate the base64 image
 base64_image = get_base64_image(image_path)
 
-# CSS to set the background image
+# CSS to set the background image and adjust file uploader button
 st.markdown(
     f"""
     <style>
     .stApp {{
         background: url(data:image/png;base64,{base64_image}) no-repeat center center fixed;
-        background-size: 100% 99.9%;
-;
+        background-size: cover;
+    }}
+    /* Adjusting file uploader container */
+    .stFileUploader > div {{
+        width: 60%; /* Adjust container width */
+        margin-left: 20%; /* Add margin to move container to the left */
+        margin-top: 10%; /* Add margin to move container to the top */
+    }}
+    /* Adjusting file uploader button */
+    .stFileUploader > div > label > input {{
+        width: 100%; /* Adjust input width */
+        height: 50px; /* Adjust input height */
+        padding: 10px; /* Adjust padding */
+    }}
+    /* Move file uploader button to the left */
+    .stFileUploader > div > label {{
+        text-align: left;
     }}
     </style>
     """,
     unsafe_allow_html=True
 )
 
-
 file = st.file_uploader("Choose a hand gesture from the photos", type=["jpg", "png"])
 
 def import_and_predict(image_data, model):
-    size = (64, 64)  # Match the input size with the Google Colab code
-    image = ImageOps.fit(image_data, size, PIL.Image.LANCZOS)  # Use PIL.Image.LANCZOS for resizing
+    size = (50, 50)  # Match the input size with the Google Colab code
+    image = ImageOps.fit(image_data, size, Image.LANCZOS)  # Use Image.LANCZOS for resizing
     img = np.asarray(image)
     img = img / 255.0  # Normalize pixel values
     img = np.expand_dims(img, axis=0)
