@@ -17,7 +17,7 @@ def get_base64_image(image_path):
         return base64.b64encode(img_file.read()).decode()
 
 # Path to your image file
-image_path = 'aslbgg.png'
+image_path = 'aslbgggg.png'
 
 # Generate the base64 image
 base64_image = get_base64_image(image_path)
