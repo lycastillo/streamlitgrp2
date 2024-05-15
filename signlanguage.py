@@ -11,73 +11,51 @@ def load_model():
 
 model = load_model()
 
-# Main layout
+# CSS for custom styling
 st.markdown("""
     <style>
-        .main {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .title-section {
-            width: 100%;
-            text-align: center;
+        .title {
             background-color: #001f3f;
             color: white;
-            padding: 20px 0;
-            margin-bottom: 20px;
-        }
-        .title-section h1 {
-            margin: 0;
+            padding: 20px;
+            text-align: center;
         }
         .upload-section {
             background-color: #001f3f;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
             color: white;
-            width: 80%;
-            max-width: 600px;
-            margin-bottom: 20px;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
         }
         .result-section {
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 80%;
-            max-width: 600px;
+            height: 150px;
         }
         .result-box {
             flex: 1;
-            height: 150px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 24px;
             color: white;
+            height: 100%;
         }
-        .result-box.red { background-color: #FF4136; }
-        .result-box.green { background-color: #2ECC40; }
-        .result-box.yellow { background-color: #FFDC00; }
+        .red { background-color: #FF4136; }
+        .green { background-color: #2ECC40; }
+        .yellow { background-color: #FFDC00; }
     </style>
-    <div class="main">
-        <div class="title-section">
-            <h1>American Sign Language</h1>
-        </div>
-        <div class="upload-section">
-            <h3>Choose File:</h3>
-            <input type="file" id="file-uploader" accept=".jpg, .png">
-        </div>
-        <div class="result-section">
-            <div class="result-box red" id="result-box-red"></div>
-            <div class="result-box green" id="result-box-green"></div>
-            <div class="result-box yellow" id="result-box-yellow"></div>
-        </div>
-    </div>
 """, unsafe_allow_html=True)
 
+# Title Section
+st.markdown('<div class="title"><h1>GROUP 2</h1><h2>American Sign Language</h2></div>', unsafe_allow_html=True)
+
+# File Upload Section
+st.markdown('<div class="upload-section"><h3>Choose File:</h3></div>', unsafe_allow_html=True)
 file = st.file_uploader("", type=["jpg", "png"])
 
+# Function for prediction
 def import_and_predict(image_data, model):
     size = (64, 64)  # Match the input size with the Google Colab code
     image = ImageOps.fit(image_data, size, PIL.Image.LANCZOS)  # Use PIL.Image.LANCZOS for resizing
@@ -91,21 +69,30 @@ def import_and_predict(image_data, model):
     prediction = model.predict(img_reshape)
     return prediction
 
-if file is not None:
-    image = Image.open(file)
-    st.image(image, use_column_width=True)
-    prediction = import_and_predict(image, model)
-    class_names = ['0', '1', '2', '3', '4', '5', '6', '7', '8',
-                   '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
-                   'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
-                   'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-    string = "OUTPUT : " + class_names[np.argmax(prediction)]
-    st.markdown(f"""
-        <script>
-            document.getElementById('result-box-red').innerText = '{string}';
-            document.getElementById('result-box-green').innerText = '';
-            document.getElementById('result-box-yellow').innerText = '';
-        </script>
-    """, unsafe_allow_html=True)
-else:
-    st.text("Please upload an image file")
+# Results Display Section
+result_container = st.container()
+with result_container:
+    col1, col2, col3 = st.columns(3)
+    
+    if file is not None:
+        image = Image.open(file)
+        st.image(image, use_column_width=True)
+        prediction = import_and_predict(image, model)
+        class_names = ['0', '1', '2', '3', '4', '5', '6', '7', '8',
+                       '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
+                       'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
+                       'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+        string = "OUTPUT : " + class_names[np.argmax(prediction)]
+        with col1:
+            st.markdown(f'<div class="result-box red">{string}</div>', unsafe_allow_html=True)
+        with col2:
+            st.markdown('<div class="result-box green"></div>', unsafe_allow_html=True)
+        with col3:
+            st.markdown('<div class="result-box yellow"></div>', unsafe_allow_html=True)
+    else:
+        with col1:
+            st.markdown('<div class="result-box red">No file uploaded</div>', unsafe_allow_html=True)
+        with col2:
+            st.markdown('<div class="result-box green"></div>', unsafe_allow_html=True)
+        with col3:
+            st.markdown('<div class="result-box yellow"></div>', unsafe_allow_html=True)
